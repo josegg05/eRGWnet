@@ -1,0 +1,20 @@
+Average Training Time: 91.3426 secs/epoch
+Average Inference Time: 4.7899 secs
+best_id = 24
+Training finished
+The valid loss on best model is 2.5981
+
+Evaluate best model on test data for horizon 1, Test MAE: 2.5294, Test MAPE: 0.0612, Test RMSE: 4.3257
+Evaluate best model on test data for horizon 2, Test MAE: 2.8298, Test MAPE: 0.0699, Test RMSE: 5.1333
+Evaluate best model on test data for horizon 3, Test MAE: 3.1035, Test MAPE: 0.0785, Test RMSE: 5.8104
+Evaluate best model on test data for horizon 4, Test MAE: 3.3602, Test MAPE: 0.0872, Test RMSE: 6.4050
+Evaluate best model on test data for horizon 5, Test MAE: 3.5846, Test MAPE: 0.0946, Test RMSE: 6.9310
+Evaluate best model on test data for horizon 6, Test MAE: 3.7888, Test MAPE: 0.1017, Test RMSE: 7.3672
+Evaluate best model on test data for horizon 7, Test MAE: 3.9978, Test MAPE: 0.1091, Test RMSE: 7.7961
+Evaluate best model on test data for horizon 8, Test MAE: 4.1825, Test MAPE: 0.1152, Test RMSE: 8.1807
+Evaluate best model on test data for horizon 9, Test MAE: 4.3502, Test MAPE: 0.1208, Test RMSE: 8.5087
+Evaluate best model on test data for horizon 10, Test MAE: 4.4884, Test MAPE: 0.1247, Test RMSE: 8.7824
+Evaluate best model on test data for horizon 11, Test MAE: 4.6348, Test MAPE: 0.1296, Test RMSE: 9.0471
+Evaluate best model on test data for horizon 12, Test MAE: 4.7593, Test MAPE: 0.1333, Test RMSE: 9.2553
+On average over 12 horizons, Test MAE: 3.8008, Test MAPE: 0.1022, Test RMSE: 7.2952
+
