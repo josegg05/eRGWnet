@@ -143,22 +143,12 @@ def load_adj(pkl_filename, adjtype):
 
 
 def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size=None,
-                 eRec=False, eSeq=12, suffix=''):
+                 eRec=False, eR_seq_size=12, suffix=''):
     data = {}
-
-    for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
-        cat_data = np.load(os.path.join(dataset_dir, category + '.npz'))
-        data['x_' + category] = cat_data['x']
-        data['y_' + category] = cat_data['y']
-        print(f'data x_{category} shape')
-        print(data['x_' + category].shape)
-        print(f'data y_{category} shape')
-        print(data['y_' + category].shape)
-
     if eRec:
         for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
-            if os.path.exists(os.path.join(dataset_dir, f'eR{eSeq}_' + category + '.npz')):
-                cat_data = np.load(os.path.join(dataset_dir, f'eR{eSeq}_' + category + '.npz'))
+            if os.path.exists(os.path.join(dataset_dir, f'eR{eR_seq_size}_' + category + '.npz')):
+                cat_data = np.load(os.path.join(dataset_dir, f'eR{eR_seq_size}_' + category + '.npz'))
                 data['x_' + category] = cat_data['x']
                 data['y_' + category] = cat_data['y']
                 print(f'data x_{category} shape')
@@ -166,19 +156,28 @@ def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size
                 print(f'data y_{category} shape')
                 print(data['y_' + category].shape)
             else:
+                for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
+                    cat_data = np.load(os.path.join(dataset_dir, category + '.npz'))
+                    data['x_' + category] = cat_data['x']
+                    data['y_' + category] = cat_data['y']
+                    print(f'data x_{category} shape')
+                    print(data['x_' + category].shape)
+                    print(f'data y_{category} shape')
+                    print(data['y_' + category].shape)
+
                 data_size = data['x_' + category].shape[0]
-                data_x_aux = np.zeros((1, eSeq, data['x_' + category].shape[1], data['x_' + category].shape[2], data['x_' + category].shape[3]))
-                data_x_aux_temp = np.zeros((1, eSeq, data['x_' + category].shape[1], data['x_' + category].shape[2],
+                data_x_aux = np.zeros((1, eR_seq_size, data['x_' + category].shape[1], data['x_' + category].shape[2], data['x_' + category].shape[3]))
+                data_x_aux_temp = np.zeros((1, eR_seq_size, data['x_' + category].shape[1], data['x_' + category].shape[2],
                                          data['x_' + category].shape[3]))
-                data_y_aux = np.zeros((1, eSeq, data['y_' + category].shape[1], data['y_' + category].shape[2],
+                data_y_aux = np.zeros((1, eR_seq_size, data['y_' + category].shape[1], data['y_' + category].shape[2],
                                        data['y_' + category].shape[3]))
-                data_y_aux_temp = np.zeros((1, eSeq, data['y_' + category].shape[1], data['y_' + category].shape[2],
+                data_y_aux_temp = np.zeros((1, eR_seq_size, data['y_' + category].shape[1], data['y_' + category].shape[2],
                                             data['y_' + category].shape[3]))
 
-                for idx in range(data_size - eSeq):
-                    x = data['x_' + category][idx:idx+eSeq]
+                for idx in range(data_size - eR_seq_size):
+                    x = data['x_' + category][idx:idx+eR_seq_size]
                     x = np.expand_dims(x, axis=0)
-                    y = data['y_' + category][idx:idx + eSeq]
+                    y = data['y_' + category][idx:idx + eR_seq_size]
                     y = np.expand_dims(y, axis=0)
                     data_x_aux_temp = np.append(data_x_aux_temp, x, axis=0)
                     data_y_aux_temp = np.append(data_y_aux_temp, y, axis=0)
@@ -187,10 +186,10 @@ def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size
                         data_x_aux = np.append(data_x_aux, data_x_aux_temp[1:], axis=0)
                         data_y_aux = np.append(data_y_aux, data_y_aux_temp[1:], axis=0)
                         data_x_aux_temp = np.zeros(
-                            (1, eSeq, data['x_' + category].shape[1], data['x_' + category].shape[2],
+                            (1, eR_seq_size, data['x_' + category].shape[1], data['x_' + category].shape[2],
                              data['x_' + category].shape[3]))
                         data_y_aux_temp = np.zeros(
-                            (1, eSeq, data['y_' + category].shape[1], data['y_' + category].shape[2],
+                            (1, eR_seq_size, data['y_' + category].shape[1], data['y_' + category].shape[2],
                              data['y_' + category].shape[3]))
                 data_x_aux = np.append(data_x_aux, data_x_aux_temp[1:], axis=0)
                 data_y_aux = np.append(data_y_aux, data_y_aux_temp[1:], axis=0)
@@ -200,7 +199,17 @@ def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size
                 print(data['x_' + category].shape)
                 print(f'data y_{category} shape')
                 print(data['y_' + category].shape)
-                np.savez_compressed(os.path.join(dataset_dir, f'eR{eSeq}_' + category + '.npz'), x=data['x_' + category], y=data['y_' + category])
+                np.savez_compressed(os.path.join(dataset_dir, f'eR{eR_seq_size}_' + category + '.npz'), x=data['x_' + category], y=data['y_' + category])
+
+    else:
+        for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
+            cat_data = np.load(os.path.join(dataset_dir, category + '.npz'))
+            data['x_' + category] = cat_data['x']
+            data['y_' + category] = cat_data['y']
+            print(f'data x_{category} shape')
+            print(data['x_' + category].shape)
+            print(f'data y_{category} shape')
+            print(data['y_' + category].shape)
 
     scaler = StandardScaler(mean=data[f'x_train{suffix}'][..., 0].mean(),
                             std=data[f'x_train{suffix}'][..., 0].std())

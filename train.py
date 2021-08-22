@@ -13,13 +13,14 @@ import sys
 parser = argparse.ArgumentParser()
 parser.add_argument('--device',type=str,default='cuda:0',help='')
 parser.add_argument('--data',type=str,default='data/METR-LA', help='data path')
+parser.add_argument('--suffix',type=str,default='_filtered_we', help='data file suffix')
 parser.add_argument('--adjdata',type=str,default='data/sensor_graph/adj_mx.pkl', help='adj data path')
 parser.add_argument('--adjtype',type=str,default='doubletransition',help='adj type')
 parser.add_argument('--gcn_bool',action='store_true',help='whether to add graph convolution layer')
 parser.add_argument('--aptonly',action='store_true',help='whether only adaptive adj')
 parser.add_argument('--addaptadj',action='store_true',help='whether add adaptive adj')
 parser.add_argument('--randomadj',action='store_true',help='whether random initialize adaptive adj')
-parser.add_argument('--seq_length',type=int,default=12,help='')
+parser.add_argument('--seq_length',type=int,default=12,help='output sequence length')
 parser.add_argument('--nhid',type=int,default=32,help='')
 parser.add_argument('--in_dim',type=int,default=2,help='inputs dimension')
 parser.add_argument('--num_nodes',type=int,default=207,help='number of nodes')
@@ -29,8 +30,8 @@ parser.add_argument('--dropout',type=float,default=0.3,help='dropout rate')
 parser.add_argument('--weight_decay',type=float,default=0.0001,help='weight decay rate')
 parser.add_argument('--epochs',type=int,default=100,help='')
 parser.add_argument('--print_every',type=int,default=50,help='')
-#parser.add_argument('--seed',type=int,default=99,help='random seed')
-parser.add_argument('--save',type=str,default='./garage/metr',help='save path')
+parser.add_argument('--seed',type=int,default=99,help='random seed')
+parser.add_argument('--save',type=str,default='results/model',help='save path')
 parser.add_argument('--expid',type=int,default=1,help='experiment id')
 
 args = parser.parse_args()
@@ -39,18 +40,18 @@ args = parser.parse_args()
 
 
 def main():
-    #set seed
-    #torch.manual_seed(args.seed)
-    #np.random.seed(args.seed)
-    #load data
+    # set seed
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    # load data
     device = torch.device(args.device)
     sensor_ids, sensor_id_to_ind, adj_mx = util.load_adj(args.adjdata,args.adjtype)
-    suffix = '_filtered_we'  # _filtered_we, _filtered_ew
-    eRec = True  # Change to false to use the original
-    eSeq = 24
-    error_size=6
+    # suffix = '_filtered_we'  # _filtered_we, _filtered_ew
+    eRec = False  # Change to false to use the original
+    eR_seq_size = 24  # 24
+    error_size = 6
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
-                                   eRec=eRec, eSeq=eSeq, suffix=suffix)
+                                   eRec=eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
     scaler = dataloader['scaler']
     supports = [torch.tensor(i).to(device) for i in adj_mx]
 
@@ -156,7 +157,7 @@ def main():
     print(f'best_id = {bestid}')
 
     outputs = []
-    realy = torch.Tensor(dataloader[f'y_test{suffix}']).to(device)
+    realy = torch.Tensor(dataloader[f'y_test{args.suffix}']).to(device)
     #print(f'realy: {realy.shape}')
     if eRec:
         realy = realy.transpose(0, 1)

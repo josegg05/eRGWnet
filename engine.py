@@ -39,8 +39,8 @@ class trainer():
         if self.clip is not None:
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), self.clip)
         self.optimizer.step()
-        mape = util.masked_mape(predict,real,0.0).item()
-        rmse = util.masked_rmse(predict,real,0.0).item()
+        mape = util.masked_mape(predict, real, 0.0).item()
+        rmse = util.masked_rmse(predict, real, 0.0).item()
         return loss.item(),mape,rmse
 
     def eval(self, input, real_val):
@@ -57,6 +57,6 @@ class trainer():
 
         predict = self.scaler.inverse_transform(output)
         loss = self.loss(predict, real, 0.0)
-        mape = util.masked_mape(predict,real,0.0).item()
-        rmse = util.masked_rmse(predict,real,0.0).item()
+        mape = util.masked_mape(predict, real, 0.0).item()
+        rmse = util.masked_rmse(predict, real, 0.0).item()
         return loss.item(),mape,rmse
