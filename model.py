@@ -154,6 +154,8 @@ class gwnet(nn.Module):
             new_supports = self.supports + [adp]
 
         # WaveNet layers
+        # print(f'input = {input.shape}')
+        # print(self.blocks * self.layers)
         for i in range(self.blocks * self.layers):
 
             #            |----------------------------------------|     *residual*
@@ -202,7 +204,9 @@ class gwnet(nn.Module):
 
         x = F.relu(skip)
         x = F.relu(self.end_conv_1(x))
+        # print(f'x before = {x.shape}')
         x = self.end_conv_2(x)
+        # print(f'x = {x.shape}')
         return x
 
 

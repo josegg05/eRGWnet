@@ -2,13 +2,17 @@ import torch.optim as optim
 from model import *
 import util
 class trainer():
-    def __init__(self, scaler, in_dim, seq_length, num_nodes, nhid , dropout, lrate, wdecay, device, supports, gcn_bool, addaptadj, aptinit, eRec=False, error_size=6):
+    def __init__(self, scaler, in_dim, seq_length, num_nodes, nhid , dropout, lrate, wdecay, device, supports, gcn_bool, addaptadj, aptinit, blocks, eRec=False, error_size=6):
         if eRec:
             self.model = eRGwnet(device, num_nodes, dropout, supports=supports, gcn_bool=gcn_bool, addaptadj=addaptadj,
                                  aptinit=aptinit, in_dim=in_dim, out_dim=seq_length, residual_channels=nhid,
-                                 dilation_channels=nhid, skip_channels=nhid * 8, end_channels=nhid * 16, error_size=error_size)
+                                 dilation_channels=nhid, skip_channels=nhid * 8, end_channels=nhid * 16,
+                                 blocks=blocks, error_size=error_size)
         else:
-            self.model = gwnet(device, num_nodes, dropout, supports=supports, gcn_bool=gcn_bool, addaptadj=addaptadj, aptinit=aptinit, in_dim=in_dim, out_dim=seq_length, residual_channels=nhid, dilation_channels=nhid, skip_channels=nhid * 8, end_channels=nhid * 16)
+            self.model = gwnet(device, num_nodes, dropout, supports=supports, gcn_bool=gcn_bool, addaptadj=addaptadj,
+                               aptinit=aptinit, in_dim=in_dim, out_dim=seq_length, residual_channels=nhid,
+                               dilation_channels=nhid, skip_channels=nhid * 8, end_channels=nhid * 16,
+                               blocks=blocks)
         self.model.to(device)
         self.optimizer = optim.Adam(self.model.parameters(), lr=lrate, weight_decay=wdecay)
         self.loss = util.masked_mae
@@ -28,10 +32,11 @@ class trainer():
         else:
             output = self.model(input)
         output = output.transpose(1,3)
-        #print(f'output shape: {output.shape}')
-        # output = [batch_size,12,num_nodes,1]
-        #print(f'real_val shape: {real_val.shape}')
-        #print(f'real shape: {real.shape}')
+        # print(f'input shape: {input.shape}')
+        # print(f'output shape: {output.shape}')
+        # # output = [batch_size,12,num_nodes,1]
+        # print(f'real_val shape: {real_val.shape}')
+        # print(f'real shape: {real.shape}')
         predict = self.scaler.inverse_transform(output)
 
         loss = self.loss(predict, real, 0.0)

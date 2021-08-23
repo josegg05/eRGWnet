@@ -53,6 +53,10 @@ def main():
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
                                    eRec=eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
     scaler = dataloader['scaler']
+
+    blocks = int(dataloader[f'x_train{args.suffix}'].shape[1] / 3)  # Every block reduce the input sequence size by 3.
+    print(f'blocks = {blocks}')
+
     supports = [torch.tensor(i).to(device) for i in adj_mx]
 
     print(args)
@@ -65,11 +69,9 @@ def main():
     if args.aptonly:
         supports = None
 
-
     engine = trainer(scaler, args.in_dim, args.seq_length, args.num_nodes, args.nhid, args.dropout,
                      args.learning_rate, args.weight_decay, device, supports, args.gcn_bool, args.addaptadj,
-                     adjinit, eRec=eRec, error_size=error_size)
-
+                     adjinit, blocks, eRec=eRec, error_size=error_size)
 
     print("start training...",flush=True)
     his_loss =[]
@@ -93,6 +95,9 @@ def main():
                 trainy = trainy.transpose(0, 1)
             trainx= trainx.transpose(-3, -1)
             trainy = trainy.transpose(-3, -1)
+            # print(f'trainx.shape = {trainx.shape}')
+            # print(f'trainy.shape = {trainy.shape}')
+            # print(f'trainy.shape final = {trainy[:,0,:,:].shape}')
             if eRec:
                 metrics = engine.train(trainx, trainy[:, :, 0, :, :])
             else:
