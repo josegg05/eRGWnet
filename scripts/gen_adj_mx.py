@@ -52,7 +52,7 @@ if __name__ == '__main__':
                         help='CSV file containing sensor distances with three columns: [from, to, distance].')
     parser.add_argument('--normalized_k', type=float, default=0.1,
                         help='Entries that become lower than normalized_k after normalization are set to zero for sparsity.')
-    parser.add_argument('--output_pkl_filename', type=str, default='data/sensor_graph/adj_mat.pkl',
+    parser.add_argument('--output_pkl_filename', type=str, default='data/sensor_graph/adj_mx.pkl',
                         help='Path of the output file.')
     args = parser.parse_args()
 
