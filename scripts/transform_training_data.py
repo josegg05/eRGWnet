@@ -1,7 +1,7 @@
 import pandas as pd
 
-input_file = input('Enter the input file "location/filename"')
-output_file = input('Enter the output "location/filename"')
+input_file = input('Enter the input file "location/filename":')
+output_file = input('Enter the output "location/filename":')
 
 # input file example
 # input_file = 'C:/Users/jose0/PycharmProjects/CUTMaC-CloudApps/datasets/las_vegas/i15_bugatti/detectors_28/data_evenly_complete_train.csv'

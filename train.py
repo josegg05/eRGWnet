@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--device',type=str,default='cuda:0',help='')
 parser.add_argument('--data',type=str,default='data/METR-LA', help='data path')
 parser.add_argument('--suffix',type=str,default='_filtered_we', help='data file suffix')
+parser.add_argument('--eRec',action='store_true',help='whether to add graph convolution layer')
 parser.add_argument('--adjdata',type=str,default='data/sensor_graph/adj_mx.pkl', help='adj data path')
 parser.add_argument('--adjtype',type=str,default='doubletransition',help='adj type')
 parser.add_argument('--gcn_bool',action='store_true',help='whether to add graph convolution layer')
@@ -47,11 +48,10 @@ def main():
     device = torch.device(args.device)
     sensor_ids, sensor_id_to_ind, adj_mx = util.load_adj(args.adjdata,args.adjtype)
     # suffix = '_filtered_we'  # _filtered_we, _filtered_ew
-    eRec = False  # Change to false to use the original
     eR_seq_size = 24  # 24
     error_size = 6
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
-                                   eRec=eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
+                                   eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
     scaler = dataloader['scaler']
 
     blocks = int(dataloader[f'x_train{args.suffix}'].shape[1] / 3)  # Every block reduce the input sequence size by 3.
@@ -71,7 +71,7 @@ def main():
 
     engine = trainer(scaler, args.in_dim, args.seq_length, args.num_nodes, args.nhid, args.dropout,
                      args.learning_rate, args.weight_decay, device, supports, args.gcn_bool, args.addaptadj,
-                     adjinit, blocks, eRec=eRec, error_size=error_size)
+                     adjinit, blocks, eRec=args.eRec, error_size=error_size)
 
     print("start training...",flush=True)
     his_loss =[]
@@ -90,7 +90,7 @@ def main():
         for iter, (x, y) in enumerate(dataloader['train_loader'].get_iterator()):
             trainx = torch.Tensor(x).to(device)
             trainy = torch.Tensor(y).to(device)
-            if eRec:
+            if args.eRec:
                 trainx = trainx.transpose(0, 1)
                 trainy = trainy.transpose(0, 1)
             trainx= trainx.transpose(-3, -1)
@@ -98,7 +98,7 @@ def main():
             # print(f'trainx.shape = {trainx.shape}')
             # print(f'trainy.shape = {trainy.shape}')
             # print(f'trainy.shape final = {trainy[:,0,:,:].shape}')
-            if eRec:
+            if args.eRec:
                 metrics = engine.train(trainx, trainy[:, :, 0, :, :])
             else:
                 metrics = engine.train(trainx, trainy[:,0,:,:])
@@ -120,12 +120,12 @@ def main():
         for iter, (x, y) in enumerate(dataloader['val_loader'].get_iterator()):
             testx = torch.Tensor(x).to(device)
             testy = torch.Tensor(y).to(device)
-            if eRec:
+            if args.eRec:
                 testx = testx.transpose(0, 1)
                 testy = testy.transpose(0, 1)
             testx = testx.transpose(-3, -1)
             testy = testy.transpose(-3, -1)
-            if eRec:
+            if args.eRec:
                 metrics = engine.eval(testx, testy[:, :, 0, :, :])
             else:
                 metrics = engine.eval(testx, testy[:,0,:,:])
@@ -152,19 +152,19 @@ def main():
     print("Average Inference Time: {:.4f} secs".format(np.mean(val_time)))
 
     #testing
-    bestid = 24
+    bestid = 82  # 24 hay que sumarle 1 para obtener el ID del modelo
     bestid = np.argmin(his_loss)
     engine.model.load_state_dict(torch.load(args.save+"_epoch_"+str(bestid+1)+"_"+str(round(his_loss[bestid],2))+".pth"))
     # engine.model.load_state_dict(torch.load(args.save + f"_id_25_2.6_best_model.pth"))
     # engine.model.load_state_dict(torch.load(args.save + f"_exp1_best_2.6.pth"))
 
     #torch.save(engine.model.state_dict(), args.save + f"_id_{bestid+1}_best_model.pth")
-    print(f'best_id = {bestid}')
+    print(f'best_id = {bestid+1}')
 
     outputs = []
     realy = torch.Tensor(dataloader[f'y_test{args.suffix}']).to(device)
     #print(f'realy: {realy.shape}')
-    if eRec:
+    if args.eRec:
         realy = realy.transpose(0, 1)
         realy = realy.transpose(-3, -1)[-1,:,0,:,:]
         #print(f'realy2: {realy.shape}')
@@ -179,20 +179,20 @@ def main():
     for iter, (x, y) in enumerate(dataloader['test_loader'].get_iterator()):
         testx = torch.Tensor(x).to(device)
         testy = torch.Tensor(y).to(device)
-        if eRec:
+        if args.eRec:
             testx = testx.transpose(0, 1)
             testy = testy.transpose(0, 1)
         testx = testx.transpose(-3, -1)
         testy = testy.transpose(-3, -1)
         with torch.no_grad():
-            if eRec:
+            if args.eRec:
                 preds = engine.model(testx, testy[:, :, 0:1, :, :], scaler).transpose(1,3)
             else:
                 preds = engine.model(testx).transpose(1,3)
 
         #print(f'preds: {scaler.inverse_transform(torch.squeeze(preds.transpose(-3, -1))).shape}')
         #print(f'testy: {torch.squeeze(testy[:, 0:1, :, :].transpose(-3, -1)).shape}')
-        if eRec:
+        if args.eRec:
             loss_mse = criterion(scaler.inverse_transform(torch.squeeze(preds.transpose(-3, -1))), torch.squeeze(testy[-1, :, 0:1, :, :].transpose(-3, -1)))
             loss_mae = criterion2(scaler.inverse_transform(torch.squeeze(preds.transpose(-3, -1))), torch.squeeze(testy[-1, :, 0:1, :, :].transpose(-3, -1)))
         else:
@@ -253,7 +253,7 @@ def main():
     amae = []
     amape = []
     armse = []
-    for i in range(12):
+    for i in range(args.seq_length):
         pred = scaler.inverse_transform(yhat[:,:,i])
         real = realy[:,:,i]
         metrics = util.metric(pred,real)
@@ -263,9 +263,9 @@ def main():
         amape.append(metrics[1])
         armse.append(metrics[2])
 
-    log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
-    print(log.format(np.mean(amae),np.mean(amape),np.mean(armse)))
-    torch.save(engine.model.state_dict(), args.save+"_exp"+str(args.expid)+"_best_"+str(round(2.589,2))+".pth")
+    log = 'On average over {:.4f} horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
+    print(log.format(args.seq_length,np.mean(amae),np.mean(amape),np.mean(armse)))
+    torch.save(engine.model.state_dict(), args.save+"_exp"+str(args.expid)+"_best_"+str(round(np.min(his_loss),2))+".pth")
 
 
 

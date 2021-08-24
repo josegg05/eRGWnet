@@ -47,7 +47,7 @@ class gcn(nn.Module):
 
 
 class gwnet(nn.Module):
-    def __init__(self, device, num_nodes, dropout=0.3, supports=None, gcn_bool=True, addaptadj=True, aptinit=None, in_dim=2,out_dim=12,residual_channels=32,dilation_channels=32,skip_channels=256,end_channels=512,kernel_size=2,blocks=4,layers=2):
+    def __init__(self, device, num_nodes, dropout=0.3, supports=None, gcn_bool=True, addaptadj=True, adjinit=None, in_dim=2,out_dim=12,residual_channels=32,dilation_channels=32,skip_channels=256,end_channels=512,kernel_size=2,blocks=4,layers=2):
         super(gwnet, self).__init__()
         self.dropout = dropout
         self.blocks = blocks
@@ -74,7 +74,7 @@ class gwnet(nn.Module):
             self.supports_len += len(supports)
 
         if gcn_bool and addaptadj:
-            if aptinit is None:
+            if adjinit is None:
                 if supports is None:
                     self.supports = []
                 self.nodevec1 = nn.Parameter(torch.randn(num_nodes, 10).to(device), requires_grad=True).to(device)
@@ -83,7 +83,7 @@ class gwnet(nn.Module):
             else:
                 if supports is None:
                     self.supports = []
-                m, p, n = torch.svd(aptinit)
+                m, p, n = torch.svd(adjinit)
                 initemb1 = torch.mm(m[:, :10], torch.diag(p[:10] ** 0.5))
                 initemb2 = torch.mm(torch.diag(p[:10] ** 0.5), n[:, :10].t())
                 self.nodevec1 = nn.Parameter(initemb1, requires_grad=True).to(device)
@@ -211,7 +211,7 @@ class gwnet(nn.Module):
 
 
 class eRGwnet(nn.Module):
-    def __init__(self, device, num_nodes, dropout=0.3, supports=None, gcn_bool=True, addaptadj=True, aptinit=None,
+    def __init__(self, device, num_nodes, dropout=0.3, supports=None, gcn_bool=True, addaptadj=True, adjinit=None,
                  in_dim=2,out_dim=12,residual_channels=32,dilation_channels=32,skip_channels=256,end_channels=512,
                  kernel_size=2,blocks=4,layers=2,error_size=6):
         super(eRGwnet, self).__init__()
@@ -246,7 +246,7 @@ class eRGwnet(nn.Module):
             self.supports_len += len(supports)
 
         if gcn_bool and addaptadj:
-            if aptinit is None:
+            if adjinit is None:
                 if supports is None:
                     self.supports = []
                 self.nodevec1 = nn.Parameter(torch.randn(num_nodes, 10).to(device), requires_grad=True).to(device)
@@ -255,7 +255,7 @@ class eRGwnet(nn.Module):
             else:
                 if supports is None:
                     self.supports = []
-                m, p, n = torch.svd(aptinit)
+                m, p, n = torch.svd(adjinit)
                 initemb1 = torch.mm(m[:, :10], torch.diag(p[:10] ** 0.5))
                 initemb2 = torch.mm(torch.diag(p[:10] ** 0.5), n[:, :10].t())
                 self.nodevec1 = nn.Parameter(initemb1, requires_grad=True).to(device)
