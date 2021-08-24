@@ -5,11 +5,14 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from prettytable import PrettyTable
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--device',type=str,default='cuda:0',help='')
 parser.add_argument('--data',type=str,default='data/METR-LA',help='data path')
 parser.add_argument('--suffix',type=str,default='_filtered_we', help='data file suffix')
+parser.add_argument('--suffix_train',type=str,default='_filtered_we', help='data file suffix')
 parser.add_argument('--eRec',action='store_true',help='whether to add graph convolution layer')
 parser.add_argument('--adjdata',type=str,default='data/sensor_graph/adj_mx.pkl',help='adj data path')
 parser.add_argument('--adjtype',type=str,default='doubletransition',help='adj type')
@@ -33,6 +36,70 @@ parser.add_argument('--save',type=str,default='results/model',help='save path')
 args = parser.parse_args()
 
 
+def plot_results(model_name, mae_test, detector=None):
+    if detector:
+        for t_idx in range(mae_test.shape[1]):
+            # for d_idx in range(mae_test.shape[2]):
+            d_idx = detector
+            plt.title(f'{model_name}: MAE Detector {d_idx}')
+            plt.xlabel('time-steps')
+            plt.ylabel('mae (ml/h)')
+            plt.plot(mae_test[:, t_idx, d_idx].detach().numpy())
+            plt.savefig(f'results/{model_name}_mae_t{t_idx}.jpg')
+            plt.show()
+    else:
+        for t_idx in range(mae_test.shape[1]):
+            for d_idx in range(mae_test.shape[2]):
+                plt.title(f'MAE Detector {d_idx}')
+                plt.xlabel('time-steps')
+                plt.ylabel('mae (ml/h)')
+                plt.plot(mae_test[:, t_idx, d_idx].detach().numpy())
+                plt.savefig(f'results/{model_name}_mae_t{t_idx}.jpg')
+                plt.show()
+    return
+
+
+def print_results(model_name, mse_test, mae_test):
+    loss_type = 'MAE'  # MAE
+    # Final Results
+    result_folder = 'results/'
+    original_stdout = sys.stdout  # Save a reference to the original standard output
+    with open(result_folder + f'final_results_{model_name}.txt', 'w') as filehandle:
+        sys.stdout = filehandle  # Change the standard output to the file we created.
+        print('1. General mean')
+        print(f'Final MSE = {torch.mean(mse_test)}')
+        print(f'Final MAE = {torch.mean(mae_test)}')
+
+        print('2. By detector')
+        print(f'Final MSE = {torch.mean(mse_test, (0, 1), keepdim=True)}')
+        print(f'Final MAE = {torch.mean(mae_test, (0, 1), keepdim=True)}')
+
+        print('3. By time')
+        print(f'Final MSE = {torch.mean(mse_test, (0, 2), keepdim=True)}')
+        print(f'Final MAE = {torch.mean(mae_test, (0, 2), keepdim=True)}')
+        tab = PrettyTable()
+        tab.field_names = [f"time_{i + 1}" for i in range(mae_test.shape[1])]
+        out = torch.mean(mae_test, (0, 2))
+        tab.add_row(out.detach().numpy())
+        print(f'{loss_type} per sequence time-step:')
+        print(tab, '\n')
+
+        print('4. By detector & time')
+        print(f'Final MSE = {torch.mean(mse_test, (0), keepdim=True)}')
+        print(f'Final MAE = {torch.mean(mae_test, (0), keepdim=True)}')
+        tab = PrettyTable()
+        tab.field_names = [f"time_{i + 1}" for i in range(mae_test.shape[1])]
+        out = torch.mean(mae_test, 0)
+        tab.add_rows(out.transpose(0, 1).detach().numpy())
+        print(f'{loss_type} per sensor per sequence time-step')
+        print(tab, '\n')
+
+        sys.stdout = original_stdout  # Reset the standard output to its original value
+
+    with open(result_folder + f'final_results_{model_name}.txt', 'r') as filehandle:
+        print(filehandle.read())
+
+    return
 
 
 def main():
@@ -50,8 +117,12 @@ def main():
 
     eR_seq_size = 24  # 24
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
-                                   eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
+                                   eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix_train)
     scaler = dataloader['scaler']
+
+    dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
+                                   eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix, scaler=scaler)
+
     blocks = int(dataloader[f'x_test{args.suffix}'].shape[1] / 3)  # Every block reduce the input sequence size by 3.
     print(f'blocks = {blocks}')
 
@@ -92,7 +163,9 @@ def main():
         outputs.append(preds.squeeze())
 
     yhat = torch.cat(outputs,dim=0)
+    print(f'yhat before shape = {yhat.shape}')
     yhat = yhat[:realy.size(0),...]
+    print(f'yhat shape = {yhat.shape}')
 
 
     amae = []
@@ -111,6 +184,18 @@ def main():
     log = 'On average over 12 horizons, Test MAE: {:.4f}, Test MAPE: {:.4f}, Test RMSE: {:.4f}'
     print(log.format(np.mean(amae),np.mean(amape),np.mean(armse)))
 
+    mse = nn.MSELoss(reduction='none')
+    mae = nn.L1Loss(reduction='none')
+    pred = scaler.inverse_transform(yhat)
+    loss_mse = mse(pred, realy).transpose(1,2)
+    loss_mae = mae(pred, realy).transpose(1,2)
+    print(f'loss_mae shape = {loss_mae.shape}')
+    if args.eRec:
+        model_name = f'gwnet{args.suffix}'
+    else:
+        model_name = f'eRgwnet{args.suffix}'
+    print_results(model_name, loss_mse, loss_mae)
+    plot_results(model_name, loss_mae, detector=1)
 
     if args.plotheatmap == "True":
         adp = F.softmax(F.relu(torch.mm(model.nodevec1, model.nodevec2)), dim=1)
@@ -122,11 +207,11 @@ def main():
         sns.heatmap(df, cmap="RdYlBu")
         plt.savefig("./emb"+ '.pdf')
 
-    y12 = realy[:,27,-1].cpu().detach().numpy()
-    yhat12 = scaler.inverse_transform(yhat[:,27,-1]).cpu().detach().numpy()
+    y12 = realy[:,-1,-1].cpu().detach().numpy()
+    yhat12 = scaler.inverse_transform(yhat[:,-1,-1]).cpu().detach().numpy()
 
-    y3 = realy[:,27,2].cpu().detach().numpy()
-    yhat3 = scaler.inverse_transform(yhat[:,27,2]).cpu().detach().numpy()
+    y3 = realy[:,-1,2].cpu().detach().numpy()
+    yhat3 = scaler.inverse_transform(yhat[:,-1,2]).cpu().detach().numpy()
 
     df2 = pd.DataFrame({'real12':y12,'pred12':yhat12, 'real3': y3, 'pred3':yhat3})
     df2.to_csv('./wave.csv',index=False)

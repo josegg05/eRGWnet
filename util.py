@@ -143,7 +143,7 @@ def load_adj(pkl_filename, adjtype):
 
 
 def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size=None,
-                 eRec=False, eR_seq_size=12, suffix=''):
+                 eRec=False, eR_seq_size=12, suffix='', scaler=None):
     data = {}
     if eRec:
         for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
@@ -156,14 +156,13 @@ def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size
                 print(f'data y_{category} shape')
                 print(data['y_' + category].shape)
             else:
-                for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
-                    cat_data = np.load(os.path.join(dataset_dir, category + '.npz'))
-                    data['x_' + category] = cat_data['x']
-                    data['y_' + category] = cat_data['y']
-                    print(f'data x_{category} shape')
-                    print(data['x_' + category].shape)
-                    print(f'data y_{category} shape')
-                    print(data['y_' + category].shape)
+                cat_data = np.load(os.path.join(dataset_dir, category + '.npz'))
+                data['x_' + category] = cat_data['x']
+                data['y_' + category] = cat_data['y']
+                print(f'data x_{category} shape')
+                print(data['x_' + category].shape)
+                print(f'data y_{category} shape')
+                print(data['y_' + category].shape)
 
                 data_size = data['x_' + category].shape[0]
                 data_x_aux = np.zeros((1, eR_seq_size, data['x_' + category].shape[1], data['x_' + category].shape[2], data['x_' + category].shape[3]))
@@ -211,8 +210,9 @@ def load_dataset(dataset_dir, batch_size, valid_batch_size=None, test_batch_size
             print(f'data y_{category} shape')
             print(data['y_' + category].shape)
 
-    scaler = StandardScaler(mean=data[f'x_train{suffix}'][..., 0].mean(),
-                            std=data[f'x_train{suffix}'][..., 0].std())
+    if scaler is None:
+        scaler = StandardScaler(mean=data[f'x_train{suffix}'][..., 0].mean(),
+                                std=data[f'x_train{suffix}'][..., 0].std())
 
             # Data format
     for category in [f'train{suffix}', f'val{suffix}', f'test{suffix}']:
