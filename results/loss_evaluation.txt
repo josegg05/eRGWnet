@@ -1,0 +1,285 @@
++--------------------------+------------+
+|         Modules          | Parameters |
++--------------------------+------------+
+|         nodevec1         |    260     |
+|         nodevec2         |    260     |
+|  filter_convs.0.weight   |    2048    |
+|   filter_convs.0.bias    |     32     |
+|  filter_convs.1.weight   |    2048    |
+|   filter_convs.1.bias    |     32     |
+|  filter_convs.2.weight   |    2048    |
+|   filter_convs.2.bias    |     32     |
+|  filter_convs.3.weight   |    2048    |
+|   filter_convs.3.bias    |     32     |
+|  filter_convs.4.weight   |    2048    |
+|   filter_convs.4.bias    |     32     |
+|  filter_convs.5.weight   |    2048    |
+|   filter_convs.5.bias    |     32     |
+|  filter_convs.6.weight   |    2048    |
+|   filter_convs.6.bias    |     32     |
+|  filter_convs.7.weight   |    2048    |
+|   filter_convs.7.bias    |     32     |
+|  filter_convs.8.weight   |    2048    |
+|   filter_convs.8.bias    |     32     |
+|  filter_convs.9.weight   |    2048    |
+|   filter_convs.9.bias    |     32     |
+|  filter_convs.10.weight  |    2048    |
+|   filter_convs.10.bias   |     32     |
+|  filter_convs.11.weight  |    2048    |
+|   filter_convs.11.bias   |     32     |
+|  filter_convs.12.weight  |    2048    |
+|   filter_convs.12.bias   |     32     |
+|  filter_convs.13.weight  |    2048    |
+|   filter_convs.13.bias   |     32     |
+|  filter_convs.14.weight  |    2048    |
+|   filter_convs.14.bias   |     32     |
+|  filter_convs.15.weight  |    2048    |
+|   filter_convs.15.bias   |     32     |
+|   gate_convs.0.weight    |    2048    |
+|    gate_convs.0.bias     |     32     |
+|   gate_convs.1.weight    |    2048    |
+|    gate_convs.1.bias     |     32     |
+|   gate_convs.2.weight    |    2048    |
+|    gate_convs.2.bias     |     32     |
+|   gate_convs.3.weight    |    2048    |
+|    gate_convs.3.bias     |     32     |
+|   gate_convs.4.weight    |    2048    |
+|    gate_convs.4.bias     |     32     |
+|   gate_convs.5.weight    |    2048    |
+|    gate_convs.5.bias     |     32     |
+|   gate_convs.6.weight    |    2048    |
+|    gate_convs.6.bias     |     32     |
+|   gate_convs.7.weight    |    2048    |
+|    gate_convs.7.bias     |     32     |
+|   gate_convs.8.weight    |    2048    |
+|    gate_convs.8.bias     |     32     |
+|   gate_convs.9.weight    |    2048    |
+|    gate_convs.9.bias     |     32     |
+|   gate_convs.10.weight   |    2048    |
+|    gate_convs.10.bias    |     32     |
+|   gate_convs.11.weight   |    2048    |
+|    gate_convs.11.bias    |     32     |
+|   gate_convs.12.weight   |    2048    |
+|    gate_convs.12.bias    |     32     |
+|   gate_convs.13.weight   |    2048    |
+|    gate_convs.13.bias    |     32     |
+|   gate_convs.14.weight   |    2048    |
+|    gate_convs.14.bias    |     32     |
+|   gate_convs.15.weight   |    2048    |
+|    gate_convs.15.bias    |     32     |
+| residual_convs.0.weight  |    1024    |
+|  residual_convs.0.bias   |     32     |
+| residual_convs.1.weight  |    1024    |
+|  residual_convs.1.bias   |     32     |
+| residual_convs.2.weight  |    1024    |
+|  residual_convs.2.bias   |     32     |
+| residual_convs.3.weight  |    1024    |
+|  residual_convs.3.bias   |     32     |
+| residual_convs.4.weight  |    1024    |
+|  residual_convs.4.bias   |     32     |
+| residual_convs.5.weight  |    1024    |
+|  residual_convs.5.bias   |     32     |
+| residual_convs.6.weight  |    1024    |
+|  residual_convs.6.bias   |     32     |
+| residual_convs.7.weight  |    1024    |
+|  residual_convs.7.bias   |     32     |
+| residual_convs.8.weight  |    1024    |
+|  residual_convs.8.bias   |     32     |
+| residual_convs.9.weight  |    1024    |
+|  residual_convs.9.bias   |     32     |
+| residual_convs.10.weight |    1024    |
+|  residual_convs.10.bias  |     32     |
+| residual_convs.11.weight |    1024    |
+|  residual_convs.11.bias  |     32     |
+| residual_convs.12.weight |    1024    |
+|  residual_convs.12.bias  |     32     |
+| residual_convs.13.weight |    1024    |
+|  residual_convs.13.bias  |     32     |
+| residual_convs.14.weight |    1024    |
+|  residual_convs.14.bias  |     32     |
+| residual_convs.15.weight |    1024    |
+|  residual_convs.15.bias  |     32     |
+|   skip_convs.0.weight    |    8192    |
+|    skip_convs.0.bias     |    256     |
+|   skip_convs.1.weight    |    8192    |
+|    skip_convs.1.bias     |    256     |
+|   skip_convs.2.weight    |    8192    |
+|    skip_convs.2.bias     |    256     |
+|   skip_convs.3.weight    |    8192    |
+|    skip_convs.3.bias     |    256     |
+|   skip_convs.4.weight    |    8192    |
+|    skip_convs.4.bias     |    256     |
+|   skip_convs.5.weight    |    8192    |
+|    skip_convs.5.bias     |    256     |
+|   skip_convs.6.weight    |    8192    |
+|    skip_convs.6.bias     |    256     |
+|   skip_convs.7.weight    |    8192    |
+|    skip_convs.7.bias     |    256     |
+|   skip_convs.8.weight    |    8192    |
+|    skip_convs.8.bias     |    256     |
+|   skip_convs.9.weight    |    8192    |
+|    skip_convs.9.bias     |    256     |
+|   skip_convs.10.weight   |    8192    |
+|    skip_convs.10.bias    |    256     |
+|   skip_convs.11.weight   |    8192    |
+|    skip_convs.11.bias    |    256     |
+|   skip_convs.12.weight   |    8192    |
+|    skip_convs.12.bias    |    256     |
+|   skip_convs.13.weight   |    8192    |
+|    skip_convs.13.bias    |    256     |
+|   skip_convs.14.weight   |    8192    |
+|    skip_convs.14.bias    |    256     |
+|   skip_convs.15.weight   |    8192    |
+|    skip_convs.15.bias    |    256     |
+|       bn.0.weight        |     32     |
+|        bn.0.bias         |     32     |
+|       bn.1.weight        |     32     |
+|        bn.1.bias         |     32     |
+|       bn.2.weight        |     32     |
+|        bn.2.bias         |     32     |
+|       bn.3.weight        |     32     |
+|        bn.3.bias         |     32     |
+|       bn.4.weight        |     32     |
+|        bn.4.bias         |     32     |
+|       bn.5.weight        |     32     |
+|        bn.5.bias         |     32     |
+|       bn.6.weight        |     32     |
+|        bn.6.bias         |     32     |
+|       bn.7.weight        |     32     |
+|        bn.7.bias         |     32     |
+|       bn.8.weight        |     32     |
+|        bn.8.bias         |     32     |
+|       bn.9.weight        |     32     |
+|        bn.9.bias         |     32     |
+|       bn.10.weight       |     32     |
+|        bn.10.bias        |     32     |
+|       bn.11.weight       |     32     |
+|        bn.11.bias        |     32     |
+|       bn.12.weight       |     32     |
+|        bn.12.bias        |     32     |
+|       bn.13.weight       |     32     |
+|        bn.13.bias        |     32     |
+|       bn.14.weight       |     32     |
+|        bn.14.bias        |     32     |
+|       bn.15.weight       |     32     |
+|        bn.15.bias        |     32     |
+|  gconv.0.mlp.mlp.weight  |    7168    |
+|   gconv.0.mlp.mlp.bias   |     32     |
+|  gconv.1.mlp.mlp.weight  |    7168    |
+|   gconv.1.mlp.mlp.bias   |     32     |
+|  gconv.2.mlp.mlp.weight  |    7168    |
+|   gconv.2.mlp.mlp.bias   |     32     |
+|  gconv.3.mlp.mlp.weight  |    7168    |
+|   gconv.3.mlp.mlp.bias   |     32     |
+|  gconv.4.mlp.mlp.weight  |    7168    |
+|   gconv.4.mlp.mlp.bias   |     32     |
+|  gconv.5.mlp.mlp.weight  |    7168    |
+|   gconv.5.mlp.mlp.bias   |     32     |
+|  gconv.6.mlp.mlp.weight  |    7168    |
+|   gconv.6.mlp.mlp.bias   |     32     |
+|  gconv.7.mlp.mlp.weight  |    7168    |
+|   gconv.7.mlp.mlp.bias   |     32     |
+|  gconv.8.mlp.mlp.weight  |    7168    |
+|   gconv.8.mlp.mlp.bias   |     32     |
+|  gconv.9.mlp.mlp.weight  |    7168    |
+|   gconv.9.mlp.mlp.bias   |     32     |
+| gconv.10.mlp.mlp.weight  |    7168    |
+|  gconv.10.mlp.mlp.bias   |     32     |
+| gconv.11.mlp.mlp.weight  |    7168    |
+|  gconv.11.mlp.mlp.bias   |     32     |
+| gconv.12.mlp.mlp.weight  |    7168    |
+|  gconv.12.mlp.mlp.bias   |     32     |
+| gconv.13.mlp.mlp.weight  |    7168    |
+|  gconv.13.mlp.mlp.bias   |     32     |
+| gconv.14.mlp.mlp.weight  |    7168    |
+|  gconv.14.mlp.mlp.bias   |     32     |
+| gconv.15.mlp.mlp.weight  |    7168    |
+|  gconv.15.mlp.mlp.bias   |     32     |
+|    start_conv.weight     |     64     |
+|     start_conv.bias      |     32     |
+|    end_conv_1.weight     |   131072   |
+|     end_conv_1.bias      |    512     |
+|    end_conv_2.weight     |    2048    |
+|     end_conv_2.bias      |     4      |
++--------------------------+------------+
+Total Trainable Params: 469100
+ 1. ***********
+MSE = 119.15049743652344
+
+ 2. ***********
+MAE = 7.2235283851623535
+
+ 3. ***********
+MAE per sensor:
++----------------+
+| mean_detectors |
++----------------+
+|   4.6352882    |
+|   5.3120136    |
+|   7.5740623    |
+|    6.402528    |
+|   4.9910665    |
+|   4.2814364    |
+|   4.9965467    |
+|   5.5946574    |
+|   5.6794415    |
+|   5.1294365    |
+|   2.8733428    |
+|   5.9156103    |
+|   10.484365    |
+|   3.6884668    |
+|    8.389215    |
+|    7.79904     |
+|    9.499902    |
+|    10.89286    |
+|   10.249873    |
+|   7.3821397    |
+|    7.882246    |
+|    9.870543    |
+|   7.3062277    |
+|    7.020202    |
+|   13.282448    |
+|   10.678756    |
++----------------+ 
+
+ 5. ***********
+MAE per sequence time-step:
++-----------+----------+----------+-----------+
+|   time_1  |  time_2  |  time_3  |   time_4  |
++-----------+----------+----------+-----------+
+| 7.2510004 | 7.237619 | 7.203921 | 7.2016077 |
++-----------+----------+----------+-----------+ 
+
+ 6. ***********
+MAE per sensor per sequence time-step
++-----------+-----------+-----------+-----------+
+|   time_1  |   time_2  |   time_3  |   time_4  |
++-----------+-----------+-----------+-----------+
+| 4.6834903 | 4.6187544 |  4.626655 |  4.612253 |
+|  5.378248 | 5.2954082 | 5.3021026 |  5.272296 |
+| 7.5221224 |  7.573379 | 7.5495205 | 7.6512275 |
+| 6.3975263 |  6.276426 |  6.399149 | 6.5370097 |
+| 5.1428075 | 4.9953213 | 4.9505363 |  4.875601 |
+| 4.3182445 | 4.3222094 |  4.254308 | 4.2309833 |
+|  4.952689 | 5.0494833 | 4.9627247 |  5.021291 |
+| 5.6065927 |  5.581687 |  5.587175 |  5.603176 |
+| 5.6815763 |  5.658887 |  5.668717 | 5.7085867 |
+| 5.1520348 | 5.1066594 | 5.1236086 |  5.135443 |
+| 2.9302466 | 2.9106212 | 2.8463023 | 2.8062012 |
+|  5.873658 | 5.9528813 |  5.913378 | 5.9225225 |
+| 11.077947 | 10.503157 | 10.267672 |  10.08869 |
+| 3.7258618 | 3.6899254 | 3.6845264 | 3.6535542 |
+|  8.431434 |  8.43009  |  8.368102 |  8.327238 |
+| 7.8838673 | 7.7814937 |  7.790045 |  7.740754 |
+|  9.525974 |  9.517552 |  9.477778 |  9.478301 |
+| 10.845918 |  10.93727 | 10.898605 | 10.889648 |
+| 10.258444 | 10.234394 | 10.243393 | 10.263264 |
+| 7.3915515 | 7.3710723 | 7.4117894 |  7.354147 |
+| 7.9474616 | 7.8792386 | 7.8584514 | 7.8438315 |
+|  9.693772 |  9.982162 |  9.887632 |  9.918604 |
+| 7.3108597 |  7.332256 | 7.2883034 |  7.293493 |
+| 7.1015234 |  7.008351 |  7.003085 | 6.9678493 |
+| 13.144829 | 13.399239 |  13.23073 | 13.354996 |
+| 10.547167 | 10.769802 | 10.707195 | 10.690862 |
++-----------+-----------+-----------+-----------+ 
+

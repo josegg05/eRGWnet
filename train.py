@@ -15,6 +15,8 @@ parser.add_argument('--device',type=str,default='cuda:0',help='')
 parser.add_argument('--data',type=str,default='data/METR-LA', help='data path')
 parser.add_argument('--suffix',type=str,default='_filtered_we', help='data file suffix')
 parser.add_argument('--eRec',action='store_true',help='whether to add graph convolution layer')
+parser.add_argument('--retrain',action='store_true',help='whether to load a previous model')
+parser.add_argument('--checkpoint',type=str,help='')
 parser.add_argument('--adjdata',type=str,default='data/sensor_graph/adj_mx.pkl', help='adj data path')
 parser.add_argument('--adjtype',type=str,default='doubletransition',help='adj type')
 parser.add_argument('--gcn_bool',action='store_true',help='whether to add graph convolution layer')
@@ -71,7 +73,11 @@ def main():
 
     engine = trainer(scaler, args.in_dim, args.seq_length, args.num_nodes, args.nhid, args.dropout,
                      args.learning_rate, args.weight_decay, device, supports, args.gcn_bool, args.addaptadj,
-                     adjinit, blocks, eRec=args.eRec, error_size=error_size)
+                     adjinit, blocks, eRec=args.eRec, retrain=args.retrain, checkpoint=args.checkpoint,
+                     error_size=error_size)
+
+    if args.retrain:
+        dataloader['val_loader'] = dataloader['train_loader']
 
     print("start training...",flush=True)
     his_loss =[]

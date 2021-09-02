@@ -2,7 +2,7 @@ import torch.optim as optim
 from model import *
 import util
 class trainer():
-    def __init__(self, scaler, in_dim, seq_length, num_nodes, nhid , dropout, lrate, wdecay, device, supports, gcn_bool, addaptadj, adjinit, blocks, eRec=False, error_size=6):
+    def __init__(self, scaler, in_dim, seq_length, num_nodes, nhid , dropout, lrate, wdecay, device, supports, gcn_bool, addaptadj, adjinit, blocks, eRec=False, retrain=False, checkpoint='', error_size=6):
         if eRec:
             self.model = eRGwnet(device, num_nodes, dropout, supports=supports, gcn_bool=gcn_bool, addaptadj=addaptadj,
                                  adjinit=adjinit, in_dim=in_dim, out_dim=seq_length, residual_channels=nhid,
@@ -14,6 +14,9 @@ class trainer():
                                dilation_channels=nhid, skip_channels=nhid * 8, end_channels=nhid * 16,
                                blocks=blocks)
         self.model.to(device)
+        if retrain:
+            self.model.load_state_dict(torch.load(checkpoint, map_location=torch.device(device)))
+            print(self.model)
         self.optimizer = optim.Adam(self.model.parameters(), lr=lrate, weight_decay=wdecay)
         self.loss = util.masked_mae
         self.scaler = scaler
