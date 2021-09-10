@@ -62,7 +62,7 @@ def main():
                                        eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix_train)
         scaler = dl_train['scaler']
 
-    blocks = int(dataloader[f'x_train{args.suffix}'].shape[1] / 3)  # Every block reduce the input sequence size by 3.
+    blocks = int(dataloader[f'x_train{args.suffix}'].shape[-3] / 3)  # Every block reduce the input sequence size by 3.
     print(f'blocks = {blocks}')
 
     supports = [torch.tensor(i).to(device) for i in adj_mx]
