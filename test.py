@@ -155,6 +155,7 @@ def main():
             testy = testy.transpose(0, 1)
         testx = testx.transpose(-3, -1)
         testy = testy.transpose(-3, -1)
+        # print(f'testx.shape = {testx.shape}')
         with torch.no_grad():
             if args.eRec:
                 preds = model(testx, testy[:, :, 0:1, :, :], scaler).transpose(1,3)
@@ -190,7 +191,7 @@ def main():
     loss_mse = mse(pred, realy).transpose(1,2)
     loss_mae = mae(pred, realy).transpose(1,2)
     print(f'loss_mae shape = {loss_mae.shape}')
-    if args.eRec:
+    if not args.eRec:
         model_name = f'gwnet{args.suffix}'
     else:
         model_name = f'eRgwnet{args.suffix}'

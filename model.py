@@ -144,7 +144,9 @@ class gwnet(nn.Module):
             x = nn.functional.pad(input,(self.receptive_field-in_len,0,0,0))
         else:
             x = input
+        # print(f'x.shape = {x.shape}')
         x = self.start_conv(x)
+        # print(f'x.shape2 = {x.shape}')
         skip = 0
 
         # calculate the current adaptive adj matrix once per iteration

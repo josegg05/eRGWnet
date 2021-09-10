@@ -25,12 +25,21 @@ def generate_graph_seq2seq_io_data(
     # y: (epoch_size, output_length, num_nodes, output_dim)
     """
 
+    print('Entering generate_graph_seq2seq_io_data function')
     num_samples, num_nodes = df.shape
+    print(f'df.shape = {df.shape}')
     data = np.expand_dims(df.values, axis=-1)
+    print(f'data.shape = {data.shape}')
     feature_list = [data]
     if add_time_in_day:
+        print(df.index.values.astype("datetime64[ns]"))
+        print(df.index.values.astype("datetime64[D]"))
+        print(np.timedelta64(1, "D"))
         time_ind = (df.index.values.astype("datetime64[ns]") - df.index.values.astype("datetime64[D]")) / np.timedelta64(1, "D")
+        print(f'time_ind = {time_ind}')
         time_in_day = np.tile(time_ind, [1, num_nodes, 1]).transpose((2, 1, 0))
+        print(f'time_in_day = {time_in_day}')
+        print(f'time_in_day.shape = {time_in_day.shape}')
         feature_list.append(time_in_day)
     if add_day_in_week:
         dow = df.index.dayofweek
@@ -38,6 +47,8 @@ def generate_graph_seq2seq_io_data(
         feature_list.append(dow_tiled)
 
     data = np.concatenate(feature_list, axis=-1)
+    print(f'data.shape = {data.shape}')
+    print(f'data = {data}')
     x, y = [], []
     min_t = abs(min(x_offsets))
     max_t = abs(num_samples - abs(max(y_offsets)))  # Exclusive
@@ -46,6 +57,9 @@ def generate_graph_seq2seq_io_data(
         y.append(data[t + y_offsets, ...])
     x = np.stack(x, axis=0)
     y = np.stack(y, axis=0)
+    print(f'x.shape = {x.shape}')
+    print(f'y.shape = {y.shape}')
+    print('Exit generate_graph_seq2seq_io_data function')
     return x, y
 
 
