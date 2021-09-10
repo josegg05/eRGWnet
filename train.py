@@ -14,6 +14,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--device',type=str,default='cuda:0',help='')
 parser.add_argument('--data',type=str,default='data/METR-LA', help='data path')
 parser.add_argument('--suffix',type=str,default='_filtered_we', help='data file suffix')
+parser.add_argument('--suffix_train',type=str,default='_filtered_we', help='data file suffix')
 parser.add_argument('--eRec',action='store_true',help='whether to add graph convolution layer')
 parser.add_argument('--retrain',action='store_true',help='whether to load a previous model')
 parser.add_argument('--checkpoint',type=str,help='')
@@ -55,6 +56,11 @@ def main():
     dataloader = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
                                    eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix)
     scaler = dataloader['scaler']
+
+    if args.retrain:
+        dl_train = util.load_dataset(args.data, args.batch_size, args.batch_size, args.batch_size,
+                                       eRec=args.eRec, eR_seq_size=eR_seq_size, suffix=args.suffix_train)
+        scaler = dl_train['scaler']
 
     blocks = int(dataloader[f'x_train{args.suffix}'].shape[1] / 3)  # Every block reduce the input sequence size by 3.
     print(f'blocks = {blocks}')
